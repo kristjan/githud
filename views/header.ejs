@@ -1,12 +1,29 @@
-<header>
-  <h1>GitHUD</h1>
-  <div class="user">
-    <% if (currentUser) { %>
-      <img src="https://secure.gravatar.com/avatar/<%= currentUser.gravatar_id %>?s=30" />
-      <%= currentUser.name.split(' ')[0] %>
-      <a href="/logout">Log Out</a>
-    <% } else { %>
-      <a href="/auth/github">Log in</a>
-    <% } %>
+<header class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <ul class="nav pull-right">
+        <% if (currentUser) { %>
+          <li>
+            <img src="https://secure.gravatar.com/avatar/<%= currentUser.gravatar_id %>?s=40" />
+          </li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <%= currentUser.name.split(' ')[0] %>
+              <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="/logout">Log out</a></li>
+            </ul>
+          </li>
+        <% } else { %>
+          <li>
+            <div class="btn-group">
+              <a class="btn" href="/auth/github">Log in</a>
+            </div>
+          </li>
+        <% } %>
+      </ul>
+      <h1 class="brand">GitHUD</h1>
+    </div>
   </div>
 </header>
