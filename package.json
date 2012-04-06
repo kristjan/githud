@@ -1,6 +1,6 @@
 {
   "author": "Kristján Pétursson <kristjan@gmail.com>",
-  "name": "GitHud",
+  "name": "GitHUD",
   "description": "A JavaScript layer on top of GitHub Issues",
   "version": "0.0.1",
 
