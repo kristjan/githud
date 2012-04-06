@@ -1,6 +1,5 @@
 var express = require('express')
   , everyauth = require('everyauth')
-  , routes    = require('./routes')
   ;
 
 var app = express.createServer();
@@ -14,6 +13,7 @@ app.configure(function() {
   app.use(everyauth.middleware());
   app.use(express['static'](__dirname + "/../public"));
 });
+everyauth.helpExpress(app);
 
 app.configure('development', function() {
   app.use(express.errorHandler({
@@ -22,10 +22,10 @@ app.configure('development', function() {
   }));
 });
 
-everyauth.helpExpress(app);
-routes.init(app);
+app.start = function(port) {
+  app.listen(port, function() {
+    console.log("HUD up on", port);
+  });
+};
 
-var port = process.env.PORT || 4483;
-app.listen(port, function() {
-  console.log("HUD up on", port);
-});
+module.exports = app;
