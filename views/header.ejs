@@ -1,0 +1,12 @@
+<header>
+  <h1>GitHUD</h1>
+  <div class="user">
+    <% if (currentUser) { %>
+      <img src="https://secure.gravatar.com/avatar/<%= currentUser.gravatar_id %>?s=30" />
+      <%= currentUser.name.split(' ')[0] %>
+      <a href="/logout">Log Out</a>
+    <% } else { %>
+      <a href="/auth/github">Log in</a>
+    <% } %>
+  </div>
+</header>
