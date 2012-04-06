@@ -2,7 +2,7 @@ if (typeof GitHUD === 'undefined') GitHUD = {};
 
 GitHUD.Core = (function() {
   function init() {
-    console.log("OK");
+    console.log($.cookie('githubToken'));
   }
 
   return {
