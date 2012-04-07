@@ -1,31 +1,58 @@
 if (typeof GitHUD === 'undefined') GitHUD = {};
 
-GitHUD.Util = (function() {
-  var API_BASE = 'https://api.github.com/';
-
-  function url(path, params) {
-    var u = path;
-    if (!path.match(/^http/i)) u = API_BASE + path;
-    u += '?access_token=' + $.cookie('githubToken');
-    if (params) {
-      _.each(_.keys(params), function(k) {
-        u += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
-      });
-    }
-    return u;
+GitHUD.Core = (function() {
+  function init() {
+    var repo = new GitHUD.Repo('kristjan/playground');
+    repo.labels().fetch({success: loadFlowLabels});
   }
 
-  function initRepo(obj, options) {
-    if (options.repo && typeof options.repo === 'string') {
-      var repo = new GitHUD.Repo(options.repo);
-      if (obj.set && typeof obj.set === 'function') obj.set('repo', repo);
-      else obj.repo = repo;
-    }
+  function loadFlowLabels(labels, models) {
+    var flow = _.chain(models)
+      .filter(function(model) {
+        return model.name.match(/^\d+ - .+/);
+      }).sortBy(function(model) {
+        return model.name;
+      }).value();
+
+    _.each(flow, function(step) {
+      var label = labels.get(step.name);
+      printLabel(label);
+      label.issues().fetch({
+        success: function(issues, models) {
+          printIssues(label, issues);
+        }
+      });
+    });
+  }
+
+  function printLabel(label) {
+    $('#content').append(
+      $('<div>', {
+        id: slug('label', label.get('name'))
+      }).append(
+        $('<h1>', {text: label.get('name')})
+      )
+    );
+  }
+
+  function printIssues(label, issues) {
+    var issueList = $('<ul>');
+    _.each(issues.models, function(issue) {
+      issueList.append($('<li>', {
+        text: issue.get('title')
+      }));
+    });
+    var id = '#' + slug('label', label.get('name'));
+    $(id).append(issueList);
+  }
+
+  function slug(type, name) {
+    return type + name.replace(/[^\-_0-9a-z]/ig, '');
   }
 
   return {
-    API_BASE : API_BASE,
-    initRepo : initRepo,
-    url      : url
+    init : init
   };
 })();
+
+$(GitHUD.Core.init);

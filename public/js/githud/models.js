@@ -15,6 +15,9 @@ $(function() {
     handle: function() {
       return this.get('user') + '/' + this.get('name');
     },
+    labels: function() {
+      return new GitHUD.Labels([], {repo: this});
+    },
     url: function() {
       return GitHUD.Util.url('repos/' + this.handle());
     }
@@ -37,15 +40,26 @@ $(function() {
     model: GitHUD.Issue,
     initialize: function(models, options) {
       GitHUD.Util.initRepo(this, options);
+      this.labels = options.labels;
     },
     url: function() {
-      return GitHUD.Util.url('repos/' + this.repo.handle() + '/issues');
+      var options = {};
+      if (this.labels) options.labels = this.labels.join(',');
+      return GitHUD.Util.url('repos/' + this.repo.handle() + '/issues',
+                             options);
     }
   });
 
   GitHUD.Label = Backbone.Model.extend({
+    idAttribute: 'name',
     initialize: function(options) {
       GitHUD.Util.initRepo(this, options);
+    },
+    issues: function() {
+      return new GitHUD.Issues([], {
+        repo: this.get('repo'),
+        labels: [this.get('name')]
+      });
     },
     url: function() {
       return GitHUD.Util.url('repos/' + this.get('repo').handle() +
