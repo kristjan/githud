@@ -15,36 +15,13 @@ GitHUD.Core = (function() {
       }).value();
 
     _.each(flow, function(step) {
-      var label = labels.get(step.name);
-      printLabel(label);
-      label.issues().fetch({
-        success: function(issues, models) {
-          printIssues(label, issues);
-        }
-      });
+      printLabel(labels.get(step.name));
     });
   }
 
   function printLabel(label) {
-    $('#content').append(
-      $('<div>', {
-        id: GitHUD.Util.slug('label', label.get('name'))
-      }).append(
-        $('<h1>', {text: label.get('name')})
-      )
-    );
-  }
-
-  function printIssues(label, issues) {
-    var issueList = $('<ul>');
-    _.each(issues.models, function(issue) {
-      var view = new GitHUD.IssueView({
-        model: issue
-      });
-      issueList.append(view.el);
-    });
-    var id = '#' + GitHUD.Util.slug('label', label.get('name'));
-    $(id).append(issueList);
+    var view = new GitHUD.StageView({ model: label });
+    $('#content').append(view.el);
   }
 
   return {

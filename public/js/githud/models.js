@@ -59,10 +59,16 @@ $(function() {
       GitHUD.Util.initRepo(this, options);
     },
     issues: function() {
-      return new GitHUD.Issues([], {
-        repo: this.get('repo'),
-        labels: [this.get('name')]
-      });
+      if (!this.get('issues')) {
+        this.set('issues', new GitHUD.Issues([], {
+          repo: this.get('repo'),
+          labels: [this.get('name')]
+        }));
+      }
+      return this.get('issues');
+    },
+    slug: function() {
+      return GitHUD.Util.slug('label', this.get('name'));
     },
     url: function() {
       return GitHUD.Util.url('repos/' + this.get('repo').handle() +
