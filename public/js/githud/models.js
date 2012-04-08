@@ -28,6 +28,9 @@ $(function() {
     initialize: function(options) {
       GitHUD.Util.initRepo(this, options);
     },
+    slug : function() {
+      return GitHUD.Util.slug('issue', this.get('number'));
+    },
     url: function() {
       return GitHUD.Util.url(
         this.get('url') ||

@@ -28,7 +28,7 @@ GitHUD.Core = (function() {
   function printLabel(label) {
     $('#content').append(
       $('<div>', {
-        id: slug('label', label.get('name'))
+        id: GitHUD.Util.slug('label', label.get('name'))
       }).append(
         $('<h1>', {text: label.get('name')})
       )
@@ -38,16 +38,13 @@ GitHUD.Core = (function() {
   function printIssues(label, issues) {
     var issueList = $('<ul>');
     _.each(issues.models, function(issue) {
-      issueList.append($('<li>', {
-        text: issue.get('title')
-      }));
+      var view = new GitHUD.IssueView({
+        model: issue
+      });
+      issueList.append(view.el);
     });
-    var id = '#' + slug('label', label.get('name'));
+    var id = '#' + GitHUD.Util.slug('label', label.get('name'));
     $(id).append(issueList);
-  }
-
-  function slug(type, name) {
-    return type + name.replace(/[^\-_0-9a-z]/ig, '');
   }
 
   return {
