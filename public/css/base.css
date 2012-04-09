@@ -1,3 +1,54 @@
-.templates {
-  display: none;
+html, body { height: 100%; }
+
+.stage {
+  float: left;
+  height: 100%;
+  box-sizing: border-box;
 }
+.stage h1 {
+  box-sizing: border-box;
+  padding: 5px 10px;
+  -moz-border-radius: 5px 5px 0 0;
+  -webkit-border-radius: 5px 5px 0 0;
+  border-radius: 5px 5px 0 0;
+  font-size: 20px;
+  font-weight: normal;
+  line-height: 24px;
+}
+.stage ul {
+  box-sizing: border-box;
+  padding: 10px 5px;
+  -moz-border-radius: 0 0 5px 5px;
+  -webkit-border-radius: 0 0 5px 5px;
+  border-radius: 0 0 5px 5px;
+  background-color: #F0F0F0;
+  overflow-y: auto;
+}
+.stage li {
+  display: border-box;
+  margin-bottom: 10px;
+  padding: 5px;
+  background-color: #FFF;
+}
+.stage li .number {
+  float: right;
+  color: #999;
+}
+.stage li h2 {
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.stage blockquote {
+  height: 36px;
+  margin: 5px 0;
+  padding: 3px 5px;
+  color: #666;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.templates { display: none; }
