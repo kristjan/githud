@@ -6,8 +6,13 @@ GitHUD.Core = (function() {
   function init() {
     GitHUD.githubToken = $.cookie('githubToken');
     $(window).resize(resizeUI);
-    initRepos();
-    GitHUD.Nav.init(GitHUD.repos);
+    if (GitHUD.githubToken) {
+      initRepos();
+      GitHUD.Nav.init(GitHUD.repos);
+      GitHUD.Kanban.init(GitHUD.repos);
+    } else {
+      $('#content').html(new GitHUD.LoginPrompt({}).render().el);
+    }
   }
 
   function initRepos() {

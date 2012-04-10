@@ -97,4 +97,14 @@ $(function() {
       }
     }
   });
+
+  GitHUD.LoginPrompt = Backbone.View.extend({
+    tagName: 'div',
+    className: 'login-prompt hero-unit',
+    template: _.template($('#login-prompt').html()),
+    render: function() {
+      this.$el.html(this.template());
+      return this;
+    }
+  });
 });

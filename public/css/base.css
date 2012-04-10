@@ -55,4 +55,18 @@ html, body { height: 100%; }
   text-overflow: ellipsis;
 }
 
+.login-prompt {
+  display: border-box;
+  width: 600px;
+  margin: 25px auto 0;
+}
+.login-prompt p {
+  margin: 20px 0;
+}
+.login-prompt a {
+  display: block;
+  width: 200px;
+  margin: 0 auto;
+}
+
 .templates { display: none; }
