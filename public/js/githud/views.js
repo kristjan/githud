@@ -24,7 +24,7 @@ $(function() {
     template: _.template($('#stage').html()),
     initialize: function(options) {
       if (options && options.model) this.id = options.model.slug();
-      _(this).bindAll('add', 'remove');
+      _(this).bindAll('add');
       this.issueViews = [];
       this.issues = this.model.get('issues');
       this.issues.each(this.add);
@@ -91,14 +91,7 @@ $(function() {
     createRepo: function(evt) {
       evt.preventDefault();
       var input = $(evt.target).closest('form').find('input[type=text]');
-      var handle = input.val();
-      if (!GitHUD.REPO_HANDLE_EX.test(handle)) return;
-      var present = this.collection.map(function(repo) {
-        return repo.get('handle').toLowerCase();
-      });
-      if (!_.include(present, handle.toLowerCase())) {
-        GitHUD.repos.add(new GitHUD.Repo(handle));
-      }
+      GitHUD.Core.addRepo(input.val());
     }
   });
 

@@ -1,9 +1,23 @@
 if (typeof GitHUD === 'undefined') GitHUD = {};
 
 GitHUD.Kanban = (function() {
+  var stageViews = _([]);
+
   function init(repos) {
-    if (!GitHUD.githubToken || repos.size() === 0) return;
-    loadLabels(repos, buildStages);
+    GitHUD.repos.on('add', loadRepo);
+    if (GitHUD.githubToken && repos.size() > 0) loadRepos(repos);
+  }
+
+  function loadRepos(repos) {
+    if (!GitHUD.labels || GitHUD.labels.size() === 0) {
+      loadLabels(repos, buildStages);
+    } else {
+      buildStages(repos);
+    }
+  }
+
+  function loadRepo(repo) {
+    loadRepos(new GitHUD.Repos([repo]));
   }
 
   function loadLabels(repos, done) {
@@ -11,7 +25,7 @@ GitHUD.Kanban = (function() {
     repos.first().labels().fetch({
       success: function(labels, models) {
         GitHUD.labels = flowLabels(labels);
-        done();
+        done(repos);
       }
     });
   }
@@ -25,20 +39,27 @@ GitHUD.Kanban = (function() {
       }).value());
   }
 
-  function buildStages() {
-    async.parallel(generateIssueFetchers(), function(err, results) {
+  function buildStages(repos) {
+    async.parallel(generateIssueFetchers(repos), function(err, results) {
       GitHUD.labels.each(buildStage);
       GitHUD.Util.resizeUI();
     });
   }
 
   function buildStage(label) {
-    var stage = new GitHUD.StageView({ model: label });
-    $('#content').append(stage.render().el);
+    var stage;
+    stage = stageViews.find(function(stage) {
+      return stage.model.get('name') === label.get('name');
+    });
+    if (!stage) {
+      stage = new GitHUD.StageView({ model: label });
+      stageViews.push(stage);
+      $('#content').append(stage.render().el);
+    }
   }
 
-  function generateIssueFetchers() {
-    return GitHUD.repos.map(function(repo) {
+  function generateIssueFetchers(repos) {
+    return repos.map(function(repo) {
       return generateIssueFetcher(repo);
     });
   }

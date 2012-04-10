@@ -27,7 +27,9 @@ $(function() {
           });
           labels.each(function(label) {
             var newIssues = byLabel[label.get('name')];
-            if (newIssues) label.get('issues').add(newIssues);
+            if (newIssues) {
+              label.get('issues').add(newIssues);
+            }
           });
           done();
         }
@@ -44,9 +46,9 @@ $(function() {
   GitHUD.Repos = Backbone.Collection.extend({});
 
   GitHUD.Issue = Backbone.Model.extend({
-    idAttribute: 'number',
     initialize: function(options) {
       GitHUD.Util.initRepo(this, options);
+      this.id = this.slug();
     },
     slug : function() {
       return GitHUD.Util.slug('issue',

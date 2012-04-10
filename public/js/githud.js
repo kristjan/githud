@@ -19,7 +19,18 @@ GitHUD.Core = (function() {
   function initRepos() {
     GitHUD.repos = new GitHUD.Repos([]);
     loadRepos();
-    GitHUD.repos.on('add', saveRepos);
+  }
+
+  function addRepo(handle) {
+    if (!GitHUD.REPO_HANDLE_EX.test(handle)) return;
+    var present = GitHUD.repos.map(function(repo) {
+      return repo.get('handle').toLowerCase();
+    });
+    if (!_.include(present, handle.toLowerCase())) {
+      var repo = new GitHUD.Repo(handle);
+      GitHUD.repos.add(repo);
+    }
+    saveRepos();
   }
 
   function loadRepos() {
@@ -37,14 +48,9 @@ GitHUD.Core = (function() {
     localStorage.setItem('repos', JSON.stringify(repoHandles));
   }
 
-  /* --- Issue loading --- */
-  function printLabel(label) {
-    var view = new GitHUD.StageView({ model: label });
-    $('#content').append(view.el);
-  }
-
   return {
-    init  : init
+    init    : init,
+    addRepo : addRepo
   };
 })();
 
