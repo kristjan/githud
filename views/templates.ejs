@@ -21,7 +21,10 @@
   </div>
 
   <div id="issue">
-    <a class="number">#{{= number }}</a>
+    <a class="number" target="_{{= repo.get('handle') }}/{{= number }}"
+       href="https://github.com/{{= repo.get('handle') }}/issues/{{= number }}">
+      #{{= number }}
+    </a>
     <h2>{{= title }}</h2>
     <blockquote>{{= body }}</blockquote>
   </div>
