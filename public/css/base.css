@@ -1,5 +1,9 @@
 html, body { height: 100%; }
 
+.nav li:last-child {
+  margin-left: 5px;
+}
+
 .stage {
   float: left;
   height: 100%;

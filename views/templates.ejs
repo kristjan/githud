@@ -1,4 +1,18 @@
 <div id="templates" class="templates">
+  <div id="repo-nav-item">
+    <a href="https://github.com/{{= handle }}/issues" target="_blank">
+      {{= handle }}
+    </a>
+  </div>
+
+  <ul id="repo-nav-list">
+    <li>
+      <form class='navbar-form add-repo'>
+        <input type="text" placeholder="Add repository" />
+      </form>
+    </li>
+  </ul>
+
   <div id="stage">
     <h1 style="background-color: #{{= color }}">{{= name }}</h1>
     <ul class="issues unstyled well"></ul>

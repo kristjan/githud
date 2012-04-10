@@ -40,5 +40,61 @@ $(function() {
       return this;
     }
   });
-});
 
+  GitHUD.RepoNavItem = Backbone.View.extend({
+    tagName: 'li',
+    template: _.template($('#repo-nav-item').html()),
+    initialize: function(options) {
+      this.render();
+    },
+    render: function(options) {
+      this.$el.attr('class', 'active').html(this.template(this.model.toJSON()));
+      return this;
+    }
+  });
+
+  GitHUD.RepoNavList = Backbone.View.extend({
+    tagName: 'ul',
+    className: 'nav nav-pills',
+    events: {
+      "submit .add-repo": "createRepo"
+    },
+    template: _.template($('#repo-nav-list').html()),
+    initialize: function(options) {
+      _(this).bindAll('add', 'remove');
+      var that = this;
+      this.itemViews = [];
+      this.id = 'repo-nav';
+
+      this.collection.each(this.add);
+      this.collection.bind('add', this.add);
+      this.render();
+    },
+    render: function(options) {
+      var that = this;
+      this.rendered = true;
+      this.$el.attr('id', this.id).html(this.template(this.collection.toJSON));
+      var addRepo = this.$('li:last-child');
+      _.each(this.itemViews, function(item) {
+        addRepo.before(item.render().el);
+      });
+      return this;
+    },
+    add: function(repo) {
+      this.itemViews.push(new GitHUD.RepoNavItem({ model: repo }));
+      if (this.rendered) this.render();
+    },
+    createRepo: function(evt) {
+      evt.preventDefault();
+      var input = $(evt.target).closest('form').find('input[type=text]');
+      var handle = input.val();
+      if (!GitHUD.REPO_HANDLE_EX.test(handle)) return;
+      var present = this.collection.map(function(repo) {
+        return repo.get('handle').toLowerCase();
+      });
+      if (!_.include(present, handle.toLowerCase())) {
+        GitHUD.repos.add(new GitHUD.Repo(handle));
+      }
+    }
+  });
+});

@@ -1,11 +1,34 @@
 if (typeof GitHUD === 'undefined') GitHUD = {};
 
+GitHUD.REPO_HANDLE_EX = /\w+\/\w+/;
+
 GitHUD.Core = (function() {
   function init() {
-    var repo = new GitHUD.Repo('kristjan/playground');
-    repo.labels().fetch({success: loadStages});
+    GitHUD.githubToken = $.cookie('githubToken');
     $(window).resize(resizeUI);
-    resizeUI();
+    initRepos();
+    GitHUD.Nav.init(GitHUD.repos);
+  }
+
+  function initRepos() {
+    GitHUD.repos = new GitHUD.Repos([]);
+    loadRepos();
+    GitHUD.repos.on('add', saveRepos);
+  }
+
+  function loadRepos() {
+    var repoHandles = JSON.parse(localStorage.getItem('repos') || '[]');
+    _.each(repoHandles, function(handle) {
+      GitHUD.repos.add(new GitHUD.Repo(handle));
+      if (GitHUD.githubToken) GitHUD.repos.last().fetch();
+    });
+  }
+
+  function saveRepos() {
+    var repoHandles = GitHUD.repos.map(function(repo) {
+      return repo.get('handle');
+    });
+    localStorage.setItem('repos', JSON.stringify(repoHandles));
   }
 
   function loadStages(labels, models) {
@@ -53,7 +76,7 @@ GitHUD.Core = (function() {
   }
 
   return {
-    init : init
+    init  : init
   };
 })();
 

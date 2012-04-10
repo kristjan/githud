@@ -1,6 +1,6 @@
 <header class="navbar">
   <div class="navbar-inner">
-    <div class="container">
+    <div id="nav" class="container">
       <ul class="nav pull-right">
         <% if (currentUser) { %>
           <li>
@@ -18,12 +18,12 @@
         <% } else { %>
           <li>
             <div class="btn-group">
-              <a class="btn" href="/auth/github">Log in</a>
+              <a class="btn btn-primary" href="/auth/github">Log in</a>
             </div>
           </li>
         <% } %>
       </ul>
-      <h1 class="brand">GitHUD</h1>
+      <h1 class="brand"><a href="#">GitHUD</a></h1>
     </div>
   </div>
 </header>

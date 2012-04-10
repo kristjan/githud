@@ -6,22 +6,22 @@ $(function() {
       var parts = [];
       if (typeof handle === 'string') {
         parts = handle.split('/');
-        if (parts.length < 2)
+        if (parts.length !== 2)
           throw new Error('Repo must be referenced as "user/name"');
         this.set('user', parts[0]);
         this.set('name', parts[1]);
       }
-    },
-    handle: function() {
-      return this.get('user') + '/' + this.get('name');
+      this.set('handle', this.get('user') + '/' + this.get('name'));
     },
     labels: function() {
       return new GitHUD.Labels([], {repo: this});
     },
     url: function() {
-      return GitHUD.Util.url('repos/' + this.handle());
+      return GitHUD.Util.url('repos/' + this.get('handle'));
     }
   });
+
+  GitHUD.Repos = Backbone.Collection.extend({});
 
   GitHUD.Issue = Backbone.Model.extend({
     idAttribute: 'number',
@@ -34,7 +34,8 @@ $(function() {
     url: function() {
       return GitHUD.Util.url(
         this.get('url') ||
-        ('repos/' + this.get('repo').handle() + '/issues/' + this.get('number'))
+        ('repos/' + this.get('repo').get('handle') +
+         '/issues/' + this.get('number'))
       );
     }
   });
@@ -48,7 +49,7 @@ $(function() {
     url: function() {
       var options = {};
       if (this.labels) options.labels = this.labels.join(',');
-      return GitHUD.Util.url('repos/' + this.repo.handle() + '/issues',
+      return GitHUD.Util.url('repos/' + this.repo.get('handle') + '/issues',
                              options);
     }
   });
@@ -71,7 +72,7 @@ $(function() {
       return GitHUD.Util.slug('label', this.get('name'));
     },
     url: function() {
-      return GitHUD.Util.url('repos/' + this.get('repo').handle() +
+      return GitHUD.Util.url('repos/' + this.get('repo').get('handle') +
                              '/labels/' + this.get('name'));
     }
   });
@@ -82,7 +83,7 @@ $(function() {
       GitHUD.Util.initRepo(this, options);
     },
     url: function() {
-      return GitHUD.Util.url('repos/' + this.repo.handle() + '/labels');
+      return GitHUD.Util.url('repos/' + this.repo.get('handle') + '/labels');
     }
   });
 });
