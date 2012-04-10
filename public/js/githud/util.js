@@ -15,7 +15,7 @@ GitHUD.Util = (function() {
   }
 
   function slug(type, name) {
-    return type + '-' + name.toString().replace(/[^\-_0-9a-z]/ig, '-');
+    return type + '-' + name.toString().replace(/\s/g, '');
   }
 
   function url(path, params) {

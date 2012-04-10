@@ -9,12 +9,9 @@ $(function() {
     tagName: 'li',
     className: 'issue',
     template: _.template($('#issue').html()),
-    initialize: function(options) {
-      if (options && options.model) this.id = options.model.slug();
-      this.render();
-    },
     render: function() {
-      this.$el.attr('id', this.id).html(this.template(this.model.toJSON()));
+      this.$el.attr('id', this.model.slug()).
+               html(this.template(this.model.toJSON()));
       return this;
     }
   });
@@ -23,24 +20,49 @@ $(function() {
     className: 'stage',
     template: _.template($('#stage').html()),
     initialize: function(options) {
-      if (options && options.model) this.id = options.model.slug();
-      _(this).bindAll('add');
+      _(this).bindAll('add', 'remove');
       this.issueViews = [];
       this.issues = this.model.get('issues');
       this.issues.each(this.add);
       this.issues.bind('add', this.add);
+      this.issues.bind('remove', this.remove);
     },
     add: function(issue) {
-      this.issueViews.push(new GitHUD.IssueView({ model: issue }));
+      if (!_(this.issueViews)
+           .find(function(view) {return view.model === issue;})) {
+        this.issueViews.push(new GitHUD.IssueView({ model: issue }));
+        if (this.rendered) this.render();
+      }
+    },
+    remove: function(issue) {
+      this.issueViews = _(this.issueViews)
+        .reject(function(view) {
+          return view.model === issue;
+        });
       if (this.rendered) this.render();
     },
     render: function() {
       this.rendered = true;
-      this.$el.attr('id', this.id).html(this.template(this.model.toJSON()));
+      this.$el.attr('id', this.model.slug()).
+               html(this.template(this.model.toJSON()));
       var issues = this.$('.issues');
       _.each(this.issueViews, function(issueView) {
         issues.append(issueView.render().el);
       });
+      $(this.$('ul')).sortable({
+        connectWith: '.stage ul',
+        opacity: 0.6,
+        update: function(evt, ui) {
+          // Two events are fired during a list change: one for the old list and
+          // one for the new one. The old list has nothing to do.
+          if (!ui.sender) return;
+          var from = GitHUD.labels.get($(ui.sender).closest('.stage').attr('id')),
+              to   = GitHUD.labels.get($(this).closest('.stage').attr('id')),
+              issue = from.get('issues').get($(ui.item).attr('id'));
+          GitHUD.Kanban.moveIssue(issue, from, to);
+        }
+      });
+      GitHUD.Util.resizeUI();
       return this;
     }
   });
@@ -68,7 +90,6 @@ $(function() {
       _(this).bindAll('add', 'remove');
       var that = this;
       this.itemViews = [];
-      this.id = 'repo-nav';
 
       this.collection.each(this.add);
       this.collection.bind('add', this.add);
@@ -77,7 +98,7 @@ $(function() {
     render: function(options) {
       var that = this;
       this.rendered = true;
-      this.$el.attr('id', this.id).html(this.template(this.collection.toJSON));
+      this.$el.attr('id', 'repo-nav').html(this.template(this.collection.toJSON));
       var addRepo = this.$('li:last-child');
       _.each(this.itemViews, function(item) {
         addRepo.before(item.render().el);

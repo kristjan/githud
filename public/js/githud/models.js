@@ -36,9 +36,10 @@ $(function() {
       GitHUD.Util.initRepo(this, options);
       this.id = this.slug();
     },
-    slug : function() {
+    slug: function() {
       return GitHUD.Util.slug('issue',
-               this.get('repo').get('handle') + '-' + this.get('number'));
+               this.get('repo').get('handle') +
+               '#' + this.get('number'));
     },
     url: function() {
       return GitHUD.Util.url(
@@ -70,6 +71,7 @@ $(function() {
     initialize: function(options) {
       GitHUD.Util.initRepo(this, options);
       this.set('issues', new GitHUD.LabelIssues([]));
+      this.id = this.slug();
     },
     slug: function() {
       return GitHUD.Util.slug('label', this.get('name'));

@@ -63,6 +63,11 @@ GitHUD.Kanban = (function() {
     }
   }
 
+  function moveIssue(issue, from, to) {
+    from.get('issues').remove(issue);
+    to.get('issues').add(issue);
+  }
+
   function generateIssueFetchers(repos) {
     return repos.map(function(repo) {
       return generateIssueFetcher(repo);
@@ -76,7 +81,8 @@ GitHUD.Kanban = (function() {
   }
 
   return {
-    init : init
+    init : init,
+    moveIssue : moveIssue
   };
 })();
 
