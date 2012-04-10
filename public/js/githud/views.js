@@ -24,18 +24,22 @@ $(function() {
     template: _.template($('#stage').html()),
     initialize: function(options) {
       if (options && options.model) this.id = options.model.slug();
-      this.render();
+      _(this).bindAll('add', 'remove');
+      this.issueViews = [];
+      this.issues = this.model.get('issues');
+      this.issues.each(this.add);
+      this.issues.bind('add', this.add);
+    },
+    add: function(issue) {
+      this.issueViews.push(new GitHUD.IssueView({ model: issue }));
+      if (this.rendered) this.render();
     },
     render: function() {
+      this.rendered = true;
       this.$el.attr('id', this.id).html(this.template(this.model.toJSON()));
       var issues = this.$('.issues');
-      this.model.issues().fetch({
-        success: function(collection, response) {
-          _.each(collection.models, function(issue) {
-            var view = new GitHUD.IssueView({ model: issue });
-            issues.append(view.el);
-          });
-        }
+      _.each(this.issueViews, function(issueView) {
+        issues.append(issueView.render().el);
       });
       return this;
     }

@@ -13,6 +13,26 @@ $(function() {
       }
       this.set('handle', this.get('user') + '/' + this.get('name'));
     },
+    addIssuesToLabels: function(labels, done) {
+      new GitHUD.RepoIssues([], {
+        repo: this,
+        labels: labels
+      }).fetch({
+        success: function(issues, models) {
+          var labelNames = labels.pluck('name');
+          var byLabel = issues.groupBy(function(issue) {
+            return _.intersect(
+                labelNames, _(issue.get('labels')).pluck('name')
+              )[0];
+          });
+          labels.each(function(label) {
+            var newIssues = byLabel[label.get('name')];
+            if (newIssues) label.get('issues').add(newIssues);
+          });
+          done();
+        }
+      });
+    },
     labels: function() {
       return new GitHUD.Labels([], {repo: this});
     },
@@ -29,7 +49,8 @@ $(function() {
       GitHUD.Util.initRepo(this, options);
     },
     slug : function() {
-      return GitHUD.Util.slug('issue', this.get('number'));
+      return GitHUD.Util.slug('issue',
+               this.get('repo').get('handle') + '-' + this.get('number'));
     },
     url: function() {
       return GitHUD.Util.url(
@@ -40,7 +61,7 @@ $(function() {
     }
   });
 
-  GitHUD.Issues = Backbone.Collection.extend({
+  GitHUD.RepoIssues = Backbone.Collection.extend({
     model: GitHUD.Issue,
     initialize: function(models, options) {
       GitHUD.Util.initRepo(this, options);
@@ -48,7 +69,7 @@ $(function() {
     },
     url: function() {
       var options = {};
-      if (this.labels) options.labels = this.labels.join(',');
+      if (this.labels) options.labels = this.labels.pluck('name').join(',');
       return GitHUD.Util.url('repos/' + this.repo.get('handle') + '/issues',
                              options);
     }
@@ -58,15 +79,7 @@ $(function() {
     idAttribute: 'name',
     initialize: function(options) {
       GitHUD.Util.initRepo(this, options);
-    },
-    issues: function() {
-      if (!this.get('issues')) {
-        this.set('issues', new GitHUD.Issues([], {
-          repo: this.get('repo'),
-          labels: [this.get('name')]
-        }));
-      }
-      return this.get('issues');
+      this.set('issues', new GitHUD.LabelIssues([]));
     },
     slug: function() {
       return GitHUD.Util.slug('label', this.get('name'));
@@ -85,5 +98,9 @@ $(function() {
     url: function() {
       return GitHUD.Util.url('repos/' + this.repo.get('handle') + '/labels');
     }
+  });
+
+  GitHUD.LabelIssues = Backbone.Collection.extend({
+    model: GitHUD.Issue
   });
 });
