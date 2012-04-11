@@ -1,5 +1,10 @@
 if (typeof GitHUD === 'undefined') GitHUD = {};
 
+Backbone.origSync = Backbone.sync;
+Backbone.sync = function(method, model, options) {
+  return Backbone.origSync(method, model, options);
+};
+
 $(function() {
   GitHUD.Repo = Backbone.Model.extend({
     initialize: function(handle) {
@@ -21,12 +26,9 @@ $(function() {
         success: done
       });
     },
-    labels: function() {
-      return new GitHUD.Labels([], {repo: this});
-    },
-    url: function() {
-      return GitHUD.Util.url('repos/' + this.get('handle'));
-    }
+    labels: function() { return new GitHUD.Labels([], {repo: this}); },
+    path: function() { return 'repos/' + this.get('handle'); },
+    url: function() { return GitHUD.Util.url(this.path()); }
   });
 
   GitHUD.Repos = Backbone.Collection.extend({});
@@ -36,16 +38,34 @@ $(function() {
       GitHUD.Util.initRepo(this, options);
       this.id = this.slug();
     },
+    changeStage: function(from, to, callbacks) {
+      var oldLabel = new GitHUD.Label({issue: this, name: from.get('name')});
+      var labels   = new GitHUD.Labels([], {issue: this});
+      $.post(
+        labels.url(),
+        JSON.stringify([to.get('name')]),
+        function(data, status, xhr) {
+          $.ajax({
+            type: 'DELETE',
+            url: oldLabel.url(),
+            success: callbacks.success,
+            dataType: 'json'
+          }).error(callbacks.error);
+        }
+      ).error(callbacks.error);
+    },
     slug: function() {
       return GitHUD.Util.slug('issue',
                this.get('repo').get('handle') +
                '#' + this.get('number'));
     },
+    path: function() {
+      return 'repos/' + this.get('repo').get('handle') +
+             '/issues/' + this.get('number');
+    },
     url: function() {
       return GitHUD.Util.url(
-        this.get('url') ||
-        ('repos/' + this.get('repo').get('handle') +
-         '/issues/' + this.get('number'))
+        this.get('url') || this.path()
       );
     }
   });
@@ -67,18 +87,25 @@ $(function() {
   });
 
   GitHUD.Label = Backbone.Model.extend({
-    idAttribute: 'name',
     initialize: function(options) {
       GitHUD.Util.initRepo(this, options);
-      this.set('issues', new GitHUD.LabelIssues([]));
+      this.issue = options.issue;
+      this.set('issues', new GitHUD.LabelIssues([], {issue: this.issue}));
       this.id = this.slug();
     },
     slug: function() {
       return GitHUD.Util.slug('label', this.get('name'));
     },
+    path: function() {
+      var name = encodeURIComponent(this.get('name'));
+      if (this.collection) {
+        return this.collection.path() + '/' + name;
+      }
+      var base = this.get('issue') || this.get('repo');
+      return base.path() + '/labels' + '/' + name;
+    },
     url: function() {
-      return GitHUD.Util.url('repos/' + this.get('repo').get('handle') +
-                             '/labels/' + this.get('name'));
+      return GitHUD.Util.url(this.path());
     }
   });
 
@@ -86,9 +113,14 @@ $(function() {
     model: GitHUD.Label,
     initialize: function(models, options) {
       GitHUD.Util.initRepo(this, options);
+      if (options) this.issue = options.issue;
+    },
+    path: function(){
+      var base = this.issue || this.repo;
+      return base.path()+ '/labels';
     },
     url: function() {
-      return GitHUD.Util.url('repos/' + this.repo.get('handle') + '/labels');
+      return GitHUD.Util.url(this.path());
     }
   });
 

@@ -63,9 +63,21 @@ GitHUD.Kanban = (function() {
     }
   }
 
+  function refreshStages() {
+    stageViews.each(function(view) {
+      view.render();
+    });
+  }
+
   function moveIssue(issue, from, to) {
-    from.get('issues').remove(issue);
-    to.get('issues').add(issue);
+    var that = this;
+    issue.changeStage(from, to, {
+      success: function() {
+        from.get('issues').remove(issue);
+        to.get('issues').add(issue);
+      },
+      error: GitHUD.Kanban.refreshStages
+    });
   }
 
   function generateIssueFetchers(repos) {
@@ -82,7 +94,8 @@ GitHUD.Kanban = (function() {
 
   return {
     init : init,
-    moveIssue : moveIssue
+    moveIssue : moveIssue,
+    refreshStages : refreshStages
   };
 })();
 
