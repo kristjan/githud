@@ -13,26 +13,12 @@ $(function() {
       }
       this.set('handle', this.get('user') + '/' + this.get('name'));
     },
-    addIssuesToLabels: function(labels, done) {
-      new GitHUD.RepoIssues([], {
+    fetchIssuesLabelled: function(label, done) {
+      new GitHUD.Issues([], {
         repo: this,
-        labels: labels
+        labels: [label]
       }).fetch({
-        success: function(issues, models) {
-          var labelNames = labels.pluck('name');
-          var byLabel = issues.groupBy(function(issue) {
-            return _.intersect(
-                labelNames, _(issue.get('labels')).pluck('name')
-              )[0];
-          });
-          labels.each(function(label) {
-            var newIssues = byLabel[label.get('name')];
-            if (newIssues) {
-              label.get('issues').add(newIssues);
-            }
-          });
-          done();
-        }
+        success: done
       });
     },
     labels: function() {
@@ -63,7 +49,7 @@ $(function() {
     }
   });
 
-  GitHUD.RepoIssues = Backbone.Collection.extend({
+  GitHUD.Issues = Backbone.Collection.extend({
     model: GitHUD.Issue,
     initialize: function(models, options) {
       GitHUD.Util.initRepo(this, options);
@@ -71,7 +57,9 @@ $(function() {
     },
     url: function() {
       var options = {};
-      if (this.labels) options.labels = this.labels.pluck('name').join(',');
+      if (this.labels) options.labels = _(this.labels).map(function(label) {
+        return label.get('name');
+      }).join(',');
       return GitHUD.Util.url('repos/' + this.repo.get('handle') + '/issues',
                              options);
     }

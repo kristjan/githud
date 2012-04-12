@@ -10,9 +10,12 @@ GitHUD.Kanban = (function() {
 
   function loadRepos(repos) {
     if (!GitHUD.labels || GitHUD.labels.size() === 0) {
-      loadLabels(repos, buildStages);
+      fetchLabels(repos, function(labels) {
+        GitHUD.labels = flowLabels(labels);
+        buildStages(GitHUD.labels, repos);
+      });
     } else {
-      buildStages(repos);
+      buildStages(GitHUD.labels, repos);
     }
   }
 
@@ -20,14 +23,9 @@ GitHUD.Kanban = (function() {
     loadRepos(new GitHUD.Repos([repo]));
   }
 
-  function loadLabels(repos, done) {
+  function fetchLabels(repos, done) {
     // Assume the first repo has all the labels for now
-    repos.first().labels().fetch({
-      success: function(labels, models) {
-        GitHUD.labels = flowLabels(labels);
-        done(repos);
-      }
-    });
+    repos.first().labels().fetch({ success: done });
   }
 
   function flowLabels(labels) {
@@ -39,9 +37,16 @@ GitHUD.Kanban = (function() {
       }).value());
   }
 
-  function buildStages(repos) {
-    async.parallel(generateIssueFetchers(repos), function(err, results) {
-      GitHUD.labels.each(buildStage);
+  function buildStages(labels, repos) {
+    async.forEach(labels, function(label, labelDone) {
+      async.forEach(repos, function(repo, repoDone) {
+        repo.fetchIssuesLabelled(label, function(issues, models) {
+          if (issues.size() > 0) label.get('issues').add(issues.models);
+          repoDone();
+        });
+      }, labelDone);
+    }, function() {
+      labels.each(buildStage);
       GitHUD.Util.resizeUI();
     });
   }
