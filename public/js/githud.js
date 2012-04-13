@@ -13,6 +13,20 @@ GitHUD.Core = (function() {
     } else {
       $('#content').html(new GitHUD.LoginPrompt({}).render().el);
     }
+    initAsteroids();
+  }
+
+  var asteroids;
+  function initAsteroids() {
+    $('#home').click(function(evt) {
+      evt.preventDefault();
+      if (asteroids) return;
+      asteroids = true;
+      $('body').append($('<script>', {
+        type: 'text/javascript',
+        src: 'http://erkie.github.com/asteroids.min.js'
+      }));
+    });
   }
 
   /* --- Repository remembering --- */
