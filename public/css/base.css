@@ -4,6 +4,11 @@ html, body { height: 100%; }
   margin-left: 5px;
 }
 
+.nav.user-info img {
+  width: 40px;
+  height: 40px;
+}
+
 .stage {
   float: left;
   height: 100%;

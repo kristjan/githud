@@ -127,4 +127,12 @@ $(function() {
       return this;
     }
   });
+
+  GitHUD.UserInfoView = Backbone.View.extend({
+    idAttribute: 'login',
+    template: _.template($('#logged-in-user').html()),
+    render: function() {
+      this.$el.html(this.template(this.model.toJSON()));
+    }
+  });
 });

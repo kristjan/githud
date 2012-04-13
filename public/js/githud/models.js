@@ -127,4 +127,10 @@ $(function() {
   GitHUD.LabelIssues = Backbone.Collection.extend({
     model: GitHUD.Issue
   });
+
+  GitHUD.User = Backbone.Model.extend({
+    url: function() {
+      return GitHUD.Util.url('user');
+    }
+  });
 });

@@ -14,6 +14,7 @@ GitHUD.Core = (function() {
       $('#content').html(new GitHUD.LoginPrompt({}).render().el);
     }
     initAsteroids();
+    initUserInfo();
   }
 
   var asteroids;
@@ -26,6 +27,20 @@ GitHUD.Core = (function() {
         type: 'text/javascript',
         src: 'http://erkie.github.com/asteroids.min.js'
       }));
+    });
+  }
+
+  function initUserInfo() {
+    GitHUD.user = new GitHUD.User({
+      token: GitHUD.githubToken
+    });
+    GitHUD.user.fetch({
+      success: function() {
+        new GitHUD.UserInfoView({
+          el: '#user-info',
+          model: GitHUD.user
+        }).render();
+      }
     });
   }
 

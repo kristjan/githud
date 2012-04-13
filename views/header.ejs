@@ -1,27 +1,12 @@
 <header class="navbar">
   <div class="navbar-inner">
     <div id="nav" class="container">
-      <ul class="nav pull-right">
-        <% if (currentUser) { %>
-          <li>
-            <img src="https://secure.gravatar.com/avatar/<%= currentUser.gravatar_id %>?s=40" />
-          </li>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <%= currentUser.name.split(' ')[0] %>
-              <b class="caret"></b>
-            </a>
-            <ul class="dropdown-menu">
-              <li><a href="/logout">Log out</a></li>
-            </ul>
-          </li>
-        <% } else { %>
-          <li>
-            <div class="btn-group">
-              <a class="btn btn-primary" href="/auth/github">Log in</a>
-            </div>
-          </li>
-        <% } %>
+      <ul id="user-info" class="user-info nav pull-right">
+        <li>
+          <div class="btn-group">
+            <a class="btn btn-primary" href="/auth/github">Log in</a>
+          </div>
+        </li>
       </ul>
       <h1 id="home" class="brand"><a href="#">GitHUD</a></h1>
     </div>
