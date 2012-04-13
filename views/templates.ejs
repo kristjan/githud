@@ -21,11 +21,15 @@
   </div>
 
   <div id="issue">
-    <a class="number" target="_{{= repo.get('handle') }}/{{= number }}"
-       href="https://github.com/{{= repo.get('handle') }}/issues/{{= number }}">
-      #{{= number }}
-    </a>
-    <h2>{{= title }}</h2>
+    {{ if (assignee) { }}
+      <img src="{{= assignee.avatar_url }}" />
+    {{ } }}
+    <h2>
+      <a target="_{{= repo.get('handle') }}/{{= number }}"
+         href="https://github.com/{{= repo.get('handle') }}/issues/{{= number }}">
+        {{= title }}
+      </a>
+    </h2>
     <blockquote>{{= body }}</blockquote>
   </div>
 

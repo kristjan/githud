@@ -2,7 +2,9 @@ if (typeof GitHUD === 'undefined') GitHUD = {};
 
 $(function() {
   _.templateSettings = {
-    interpolate : /\{\{=(.+?)\}\}/g
+    interpolate : /\{\{=(.+?)\}\}/g,
+    escape      : /\{\{-(.+?)\}\}/g,
+    evaluate    : /\{\{(.+?)\}\}/g
   };
 
   GitHUD.IssueView = Backbone.View.extend({
