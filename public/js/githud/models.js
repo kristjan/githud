@@ -1,10 +1,5 @@
 if (typeof GitHUD === 'undefined') GitHUD = {};
 
-Backbone.origSync = Backbone.sync;
-Backbone.sync = function(method, model, options) {
-  return Backbone.origSync(method, model, options);
-};
-
 $(function() {
   GitHUD.Repo = Backbone.Model.extend({
     initialize: function(handle) {
