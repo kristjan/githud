@@ -71,12 +71,14 @@ $(function() {
 
   GitHUD.RepoNavItem = Backbone.View.extend({
     tagName: 'li',
+    className: 'repo-nav-item dropdown',
     template: _.template($('#repo-nav-item').html()),
     initialize: function(options) {
       this.render();
     },
     render: function(options) {
-      this.$el.attr('class', 'active').html(this.template(this.model.toJSON()));
+      this.$el.attr('id', this.model.id)
+              .html(this.template(this.model.toJSON()));
       return this;
     }
   });
@@ -85,7 +87,8 @@ $(function() {
     tagName: 'ul',
     className: 'nav nav-pills',
     events: {
-      "submit .add-repo": "createRepo"
+      "submit .add-repo"    : "addRepo",
+      "click  .remove-repo" : "removeRepo"
     },
     template: _.template($('#repo-nav-list').html()),
     initialize: function(options) {
@@ -95,6 +98,7 @@ $(function() {
 
       this.collection.each(this.add);
       this.collection.bind('add', this.add);
+      this.collection.bind('remove', this.remove);
       this.render();
     },
     render: function(options) {
@@ -111,10 +115,25 @@ $(function() {
       this.itemViews.push(new GitHUD.RepoNavItem({ model: repo }));
       if (this.rendered) this.render();
     },
-    createRepo: function(evt) {
+    remove: function(repo) {
+              console.log("Removing", repo);
+              console.log(this.itemViews);
+      this.itemViews = _.reject(this.itemViews, function(view) {
+        console.log("Checking", view.model);
+        return view.model.get('handle') === repo.get('handle');
+      });
+      if (this.rendered) this.render();
+    },
+    addRepo: function(evt) {
       evt.preventDefault();
       var input = $(evt.target).closest('form').find('input[type=text]');
       GitHUD.Core.addRepo(input.val());
+    },
+    removeRepo: function(evt) {
+      evt.preventDefault();
+      var repoID = $(evt.target).closest('.repo-nav-item').attr('id');
+      console.log("Repo ID", repoID);
+      GitHUD.Core.removeRepo(GitHUD.repos.get(repoID));
     }
   });
 

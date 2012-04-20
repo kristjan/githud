@@ -62,6 +62,12 @@ GitHUD.Core = (function() {
     saveRepos();
   }
 
+  function removeRepo(repo) {
+    GitHUD.repos.remove(repo);
+    saveRepos();
+    location.reload();
+  }
+
   function loadRepos() {
     var repoHandles = JSON.parse(localStorage.getItem('repos') || '[]');
     _.each(repoHandles, function(handle) {
@@ -79,7 +85,8 @@ GitHUD.Core = (function() {
 
   return {
     init    : init,
-    addRepo : addRepo
+    addRepo : addRepo,
+    removeRepo : removeRepo
   };
 })();
 

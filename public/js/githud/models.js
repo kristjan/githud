@@ -12,6 +12,7 @@ $(function() {
         this.set('name', parts[1]);
       }
       this.set('handle', this.get('user') + '/' + this.get('name'));
+      this.id = this.slug();
     },
     fetchIssuesLabelled: function(label, done) {
       new GitHUD.Issues([], {
@@ -20,6 +21,9 @@ $(function() {
       }).fetch({
         success: done
       });
+    },
+    slug: function() {
+      return GitHUD.Util.slug('repo', this.get('handle'));
     },
     labels: function() { return new GitHUD.Labels([], {repo: this}); },
     path: function() { return 'repos/' + this.get('handle'); },
@@ -31,7 +35,6 @@ $(function() {
   GitHUD.Issue = Backbone.Model.extend({
     initialize: function(options) {
       GitHUD.Util.initRepo(this, options);
-      this.id = this.slug();
     },
     changeStage: function(from, to, callbacks) {
       var oldLabel = new GitHUD.Label({issue: this, name: from.get('name')});

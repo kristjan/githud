@@ -13,9 +13,19 @@
   </ul>
 
   <div id="repo-nav-item">
-    <a href="https://github.com/{{= handle }}/issues" target="_blank">
-      {{= handle }}
-    </a>
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{= handle }}<b class="caret"></b></a>
+    <ul class="dropdown-menu">
+      <li>
+        <a href="#" class="remove-repo">
+          Remove Repo
+        </a>
+      </li>
+      <li>
+        <a href="https://github.com/{{= handle }}/issues" target="_blank">
+          Go to GitHub
+        </a>
+      </li>
+    </ul>
   </div>
 
   <ul id="repo-nav-list">
