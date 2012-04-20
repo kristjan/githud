@@ -9,13 +9,13 @@
   },
 
   "engines": {
-    "node": ">0.6.5"
+    "node": ">0.6.9"
   },
 
   "dependencies": {
-    "ejs"      : ">=0.7.1",
-    "everyauth": ">=0.2.30",
-    "express"  : ">=2.5.8"
+    "ejs"      : "=0.7.1",
+    "everyauth": "=0.2.32",
+    "express"  : "=2.5.9"
   },
 
   "devDependencies": {},
