@@ -35,6 +35,7 @@ $(function() {
   GitHUD.Issue = Backbone.Model.extend({
     initialize: function(options) {
       GitHUD.Util.initRepo(this, options);
+      this.id = this.slug();
     },
     changeStage: function(from, to, callbacks) {
       var oldLabel = new GitHUD.Label({issue: this, name: from.get('name')});
