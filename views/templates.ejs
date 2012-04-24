@@ -39,6 +39,9 @@
   <div id="stage">
     <h1 style="background-color: #{{= color }}" title="{{= name }}">
       {{= name }}
+      <span class="count">
+        {{= issues.size() }} issue{{= issues.size() == 1 ? '' : 's'}}
+      </span>
     </h1>
     <ul class="issues unstyled well"></ul>
   </div>
