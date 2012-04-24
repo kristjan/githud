@@ -52,7 +52,7 @@ GitHUD.Util = (function() {
     stages.each(function(i, stage) {
       stage = $(stage);
       var list = $('ul', stage);
-      $('ul', stage).height(stage.height() - list.position().top);
+      list.height(stage.height() - list.siblings('h1:first').outerHeight());
     });
   }
 
