@@ -22,7 +22,8 @@ t = time
 //* to reach max speed it would take 15 seconds
 
 CurrentPitch(-30 & 30){
-if CurrentPitch=30 degrees 
-else CurrentPitch=-30 degrees
+if CurrentPitch= x cos 30
+else CurrentPitch= -x cos 30
+}
 CurrentYaw=
 Points= 
