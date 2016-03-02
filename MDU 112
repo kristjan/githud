@@ -1,0 +1,29 @@
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+CurrentHealth= >=MaximumHealth
+if CurrentHealth >= 0, //if not continue,
+then Console.Writeline"You are mostly possible dead ",
+MaximumHealth=1000
+if at MaximumHealth console.Writeline "Healthy as"
+}
+public void Run(SpeedFactor){
+SpeedFactor= a = (v - v0)/t       //* to calculate the acceleration from starting speed and max speed
+v=1
+v0=0.1
+a=0.06
+t=15
+//* v0 = initial velocity
+v = final velocity
+a = acceleration
+t = time
+//* to reach max speed it would take 15 seconds
+
+CurrentPitch(-30 & 30){
+if CurrentPitch= x cos 30
+else CurrentPitch= -x cos 30
+}
+CurrentYaw=
+Points= 
